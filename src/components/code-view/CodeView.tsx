@@ -1,31 +1,20 @@
+import { useState } from 'react'
 import { usePixelContext } from '@/context/PixelContext'
 import { OutputSelector } from './OutputSelector'
 
 export const CodeView = () => {
-
   const { getHex, getBinaries, outputType } = usePixelContext()
-
-  return (
-    <code className='min-w-[400px] max-w-[50%] rounded bg-[#f5f2f0] p-8'>
-      <h3 className='text-[#333] mb-4 font-bold'>Código C/C++</h3>
-      <OutputSelector />
-      <span className='text-[#216491]'>byte </span>
-      <span className='text-red-500'>custom_char</span>
-      <span className='text-yellow-500'>{'['}</span>
-      <span className='text-green-600'>8</span>
-      <span className='text-yellow-500'>{'] '}</span>=
-      <span className='text-yellow-500'> {'{'} </span>
-      <br />
-      {
-        (outputType === 'bin' ? getBinaries() : getHex()).map((binary, index) =>
-          <>
-            <span className='text-green-600' key={index}>{binary}</span>
-            <span className='text-gray-500'>,</span>
-            <br />
-          </>
-        )
-      }
-      <span className='text-yellow-500'>{'}'}</span>;
-    </code>
-  )
+  const [copied, setCopied] = useState(false)
+  const values = outputType === 'bin' ? getBinaries() : getHex()
+  const code = `byte custom_char[8] = {\n  ${values.join(',\n  ')}\n};`
+  const copyCode = async () => {
+    await navigator.clipboard.writeText(code)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
+  }
+  return <section className='panel code-panel' aria-labelledby='code-title'>
+    <div className='code-topbar'><h2 id='code-title' className='code-title'><span className='code-dot' aria-hidden='true' />Código C/C++</h2><OutputSelector /></div>
+    <pre className='code-content' aria-label='Código C gerado'><code><span className='code-keyword'>byte</span>{' '}<span className='code-name'>custom_char</span><span className='code-punctuation'>[</span><span className='code-number'>8</span><span className='code-punctuation'>] = {'{'}</span>{'\n'}{values.map((value, index) => <span className='code-row' key={value + index}>  <span className='code-value'>{value}</span><span className='code-punctuation'>,</span>{'\n'}</span>)}<span className='code-punctuation'>{'}'};</span></code></pre>
+    <button type='button' className='action-button code-copy' onClick={copyCode}>{copied ? 'Código copiado!' : 'Copiar código'}</button><p className='copy-status' aria-live='polite'>{copied ? 'O array foi copiado para a área de transferência.' : 'Pronto para colar no seu sketch Arduino.'}</p>
+  </section>
 }

@@ -1,10 +1,1 @@
-
-export const Header = () => {
-
-  return (
-    <div className="py-10 px-60">
-      <h1 className="text-4xl font-bold">Lich</h1>
-      <h2 className="text-2xl text-gray-600">Criador de Caracteres para LCD</h2>
-    </div>
-  )
-}
+export const Header = () => <header className='site-header'><a className='brand' href='/' aria-label='Lich, criador de caracteres LCD'><span className='brand-mark' aria-hidden='true'>{Array.from({ length: 9 }, (_, index) => <span key={index} />)}</span><span><strong className='brand-name'>LICH</strong><span className='brand-subtitle'>Criador de caracteres para LCD</span></span></a><span className='header-badge'>ARDUINO · 5×8</span></header>

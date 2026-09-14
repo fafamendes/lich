@@ -1,41 +1,11 @@
-import { ReactElement, useEffect, useState } from 'react'
 import { Pixel } from './Pixel'
 import { usePixelContext } from '@/context/PixelContext'
 
 export const CharacterCreatorView = () => {
-
   const { togglePixel, pixels, clearPixels, isEmpty, invertPixels } = usePixelContext()
-  const [pixelElements, setPixelElements] = useState<ReactElement[]>([])
-
-  useEffect(() => {
-    const elements: ReactElement[] = []
-
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 5; x++) {
-        elements.push(<Pixel key={`${x}-${y}`}
-          size={40}
-          active={pixels[x][y]}
-          activeColor='hsl(204.44deg 70% 92%)'
-          inactiveColor='hsl(204.44deg 70% 30%)'
-          onClick={() => togglePixel(x, y)}
-        />
-        )
-      }
-    }
-    setPixelElements(elements)
-  }, [pixels])
-
-  return (
-    <div>
-      <div className='grid grid-cols-5 gap-1 bg-[#216491] p-6'>
-        {pixelElements}
-      </div>
-      <div className='flex justify-center gap-4 mt-4'>
-        <button disabled={isEmpty()} className='rounded bg-red-500 text-white p-2 disabled:bg-gray-500 '
-          onClick={() => clearPixels()}>Limpar</button>
-        <button className='rounded bg-blue-500 text-white p-2'
-          onClick={() => invertPixels()}>Inverter</button>
-      </div>
-    </div>
-  )
+  return <section className='panel editor-panel' aria-labelledby='editor-title'>
+    <div className='panel-heading'><div><p className='eyebrow'>Editor visual</p><h1 id='editor-title' className='panel-title'>Desenhe seu caractere</h1><p className='panel-description'>Clique nos pixels para montar um símbolo personalizado para o LCD.</p></div><span className='grid-size' aria-label='Grade de 5 por 8 pixels'>5 × 8</span></div>
+    <div className='lcd-frame'><div className='pixel-grid' role='group' aria-label='Matriz de pixels do caractere'>{Array.from({ length: 8 }, (_, y) => Array.from({ length: 5 }, (_, x) => <Pixel key={`${x}-${y}`} x={x} y={y} active={pixels[x][y]} onClick={() => togglePixel(x, y)} />))}</div></div>
+    <div className='editor-actions'><button type='button' className='action-button action-button--danger' disabled={isEmpty()} onClick={clearPixels}>Limpar matriz</button><button type='button' className='action-button' onClick={invertPixels}>Inverter pixels</button></div>
+  </section>
 }
